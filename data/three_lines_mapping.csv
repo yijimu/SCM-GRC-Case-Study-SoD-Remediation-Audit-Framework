@@ -1,0 +1,11 @@
+line_of_defense,role,stakeholder,function_detail,coso_alignment,cobit_alignment
+1st Line — Operational Management,Owns and manages risk in daily operations,Supplier (CN),Origin metadata BOL accuracy HS-code declaration,Control Environment,DSS01
+1st Line — Operational Management,Owns and manages risk in daily operations,Vendor — Freight Forwarder,Rate quoting invoice issuance custody handoff to carrier,Control Activities,DSS01
+1st Line — Operational Management,Owns and manages risk in daily operations,Carrier — Truck Fleet,SLA on-time delivery weight measurement POD collection,Control Activities,DSS01
+1st Line — Operational Management,Owns and manages risk in daily operations,Warehouse Ops (Shipper 1L),Receiving PDA scan film-wrap SOP dual outbound verification,Control Activities,DSS01 DSS05
+2nd Line — Risk & Compliance,Designs & monitors controls independent of operations,SoD Policy Owner (Shipper 2L),4 SoD conflicts identified & remediated · ERP role-based access control · Counter-signature workflow,Control Environment + Control Activities,APO12 APO13
+2nd Line — Risk & Compliance,Designs & monitors controls independent of operations,BI Cost Monitoring (Shipper 2L),Tableau real-time variance dashboard · Weekly distribution to 5 stakeholders · 3 anomalies detected = $2400 protected,Information & Communication,MEA01
+2nd Line — Risk & Compliance,Designs & monitors controls independent of operations,WMS Metadata Audit,Weekly dim/weight reconciliation · 32 audits over 8 months · -12% billing disputes,Monitoring,BAI09
+3rd Line — Independent Assurance,Independent audit & verification — outside the value chain,Receiver — POD & Damage Verification,External downstream check on cargo integrity · Damage claim documentation · Independent of vendor/carrier,Monitoring,MEA03
+3rd Line — Independent Assurance,Independent audit & verification — outside the value chain,SQL Audit Trail,Immutable transaction log · 100% data integrity · 8-month archive available for external audit,Monitoring,DSS05 MEA01
+3rd Line — Independent Assurance,Independent audit & verification — outside the value chain,Weekly Anomaly Review (Mgmt),Independent meeting reviewing SoD flags billing disputes hold-cargo SLAs · Escalation protocol,Monitoring,MEA01 MEA03

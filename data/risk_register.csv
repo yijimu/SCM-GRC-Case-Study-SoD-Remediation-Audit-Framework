@@ -1,0 +1,13 @@
+risk_id,risk_name,category,owner_stakeholder,inh_likelihood,inh_impact,inherent_score,res_likelihood,res_impact,residual_score,reduction_pct,mitigation
+R-01,Unauthorized inventory adjustment,Financial,Shipper,4,4,16,2,2,4,75,SoD: separated procurement access from receiving; dual-signature enforced at all inbound touch points
+R-02,Carrier billing overcharge (dim/weight),Financial,Carrier,4,3,12,1,3,3,75,Weekly WMS metadata audit; variance BI dashboard flagging >10% deviation; -12% billing disputes
+R-03,Vendor margin inflation,Financial,Vendor,3,3,9,1,3,3,67,Invoice matching vs contracted rate; SQL-verified before payment release
+R-04,Amazon FBA rejection — height/wrap,Operational,Shipper,4,3,12,1,2,2,83,Film-wrap-before-label SOP; PDA scan confirmation; 4-tier cargo risk classification
+R-05,Missing POD — invalidates insurance,Operational,Receiver,3,5,15,1,5,5,67,POD upload requirement in carrier contract; claim protocol requires POD evidence
+R-06,Cargo loss or damage in transit,Financial,Carrier,3,5,15,1,3,3,80,5-party claim protocol; insurance verified at carrier onboarding; 100% asset recovery
+R-07,Driver no-show / empty trip cost,Operational,Carrier,4,2,8,2,2,4,50,Carrier SLA terms; confirmation call protocol; backup carrier roster
+R-08,Warehouse overflow — FBA appointment miss,Operational,Shipper,3,3,9,1,3,3,67,Inbound forecasting; WMS capacity alert at 85% fill; 48-hr advance booking
+R-09,WMS metadata inaccuracy (dims/weight),Data,Shipper,4,3,12,1,2,2,83,Weekly WMS audit; carrier measurement reconciliation before billing cycle
+R-10,Label overlap / PDA scan failure,Data,Shipper,3,2,6,1,2,2,67,Label placement SOP; re-scan protocol; WMS scan error alert
+R-11,Hold cargo — compliance or damage,Operational,Shipper,4,2,8,1,3,3,63,Hold-cargo register; daily status review; 72-hr escalation protocol
+R-12,Payment authorization conflict,Compliance,Shipper,3,4,12,1,2,2,83,Separated ERP accounts; counter-signature required; quarterly management audit

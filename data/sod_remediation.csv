@@ -1,0 +1,9 @@
+process,category,initiates,approves,executes,reviews,pre_fix_conflict,pre_fix_detail,fix_action
+PO Issuance & Vendor Selection,Procurement,Shipper (Procurement team),Shipper (Management),Vendor,Shipper (Finance),Yes,Same person selected vendor AND approved PO — unchecked vendor markup risk,ERP: vendor selection = dispatch team account · PO approval = management account · Accounts hard-separated
+Carrier Rate Negotiation & Payment,Finance,Carrier (quotes rate),Shipper (Management),Shipper (Dispatch),Shipper (Finance),Yes,Rate negotiator also processed payment — no second check on overbilled rates,Rate negotiation = dispatch team · Payment release = finance/mgmt with mandatory counter-signature
+Warehouse Receiving Acceptance,Receiving,Vendor,Shipper (Warehouse supervisor),Carrier,Shipper (WMS auto-log),Yes,Receiving clerk had active ERP procurement access — could falsify receiving records against PO,Procurement access removed from all warehouse receiving accounts in ERP · Role audit completed
+Payment Release Authorization,Finance,Shipper (Finance prepares),Shipper (Management),Shipper (Finance executes),Shipper (Audit log),Yes,Payment preparer also had release authority — single point of failure for fraudulent payment,Payment preparation ≠ payment release · Manager counter-signature required in ERP before any outgoing wire
+Cargo Claim Filing & Documentation,Claims,Shipper,Shipper (Mgmt),Receiver,Shipper (Finance),No,Clean from start,N/A
+WMS Data Entry — Pallet Dims,Operations,Carrier,Shipper (WMS supervisor),Shipper (Warehouse staff),Shipper (Weekly audit),No,Clean from start,N/A
+Invoice Verification & Approval,Finance,Vendor,Shipper (Finance),Shipper (Finance),Shipper (Management),No,Clean from start,N/A
+PDA Device Assignment,IT/Operations,Shipper (IT coordinator),Shipper (Mgmt),Shipper (Warehouse staff),Shipper (Daily log),No,Clean from start,N/A
