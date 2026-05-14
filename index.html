@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SCM GRC Case Study · Grain Warehouse · Lunarix Technologies</title>
+<style>
+:root{
+  --navy:#0f2342;--blue:#1B4F8A;--blue-m:#2A6FBA;--blue-l:#EEF3FA;
+  --teal:#1D9E75;--teal-l:#E1F5EE;
+  --amber:#BA7517;--amber-l:#FAEEDA;
+  --red:#A32D2D;--red-l:#FCEBEB;
+  --purple:#534AB7;--purple-l:#EEEDFE;
+  --text:#1a1a2e;--mid:#4a4a6a;--muted:#888;
+  --border:#e2e8f0;--bg:#f7f9ff;--white:#fff;
+  --r:10px;--rl:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;color:var(--text);background:var(--bg);font-size:14px;line-height:1.55}
+.shell{max-width:1100px;margin:0 auto;padding:22px 18px 60px}
+
+/* HEADER */
+.hdr{background:var(--navy);border-radius:var(--rl);padding:24px 28px;margin-bottom:18px;color:#fff}
+.hdr-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:10px}
+.hdr h1{font-size:20px;font-weight:600;margin-bottom:4px}
+.hdr .sub{font-size:12px;color:rgba(255,255,255,.6)}
+.hdr-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.htag{font-size:10px;padding:3px 9px;border-radius:99px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.7)}
+.htag.acc{background:rgba(29,158,117,.2);border-color:rgba(29,158,117,.4);color:#5DE8B0}
+
+/* SECTION HEADERS */
+.sec{margin-bottom:22px}
+.sec-eyebrow{font-size:10px;font-weight:600;color:var(--blue);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
+.sec-title{font-size:18px;font-weight:600;color:var(--navy);margin-bottom:6px}
+.sec-sub{font-size:12px;color:var(--mid);margin-bottom:14px}
+
+/* HERO KPI BAR — only 4, focused */
+.kpi-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:22px}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;border-left:3px solid var(--teal)}
+.kpi-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.kpi-v{font-size:24px;font-weight:600;color:var(--navy);line-height:1;margin-bottom:3px}
+.kpi-s{font-size:11px;color:var(--mid)}
+
+/* HEAT MAP CONTAINER */
+.heatmap-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:22px 24px;margin-bottom:22px}
+.heat-layout{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:start}
+.heat-svg-wrap{position:relative}
+.heat-legend{font-size:11px;color:var(--mid);margin-top:10px;display:flex;gap:14px;flex-wrap:wrap}
+.legend-dot{width:11px;height:11px;border-radius:3px;display:inline-block;margin-right:4px;vertical-align:middle}
+
+/* Heat sidebar — selected risk panel */
+.risk-panel{background:var(--bg);border-radius:var(--r);padding:14px 16px}
+.risk-panel-title{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
+.risk-name-big{font-size:15px;font-weight:600;color:var(--navy);margin-bottom:4px;line-height:1.3}
+.risk-cat-pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:99px;font-weight:500;margin-bottom:10px}
+.cat-fin{background:#EEF3FA;color:#0C447C}
+.cat-ops{background:#EEEDFE;color:#3C3489}
+.cat-data{background:#FAEEDA;color:#633806}
+.cat-comp{background:#E1F5EE;color:#085041}
+.score-row{display:flex;gap:12px;margin-bottom:10px}
+.score-block{flex:1;background:var(--white);border-radius:7px;padding:8px 10px}
+.score-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.score-val{font-size:18px;font-weight:600}
+.score-val.inh{color:var(--red)}
+.score-val.res{color:var(--teal)}
+.mit-text{font-size:11px;color:var(--mid);line-height:1.6;border-top:1px dashed var(--border);padding-top:9px;margin-top:8px}
+.reduction-bar{font-size:11px;font-weight:600;color:var(--teal);margin-top:6px}
+
+/* HERO STORY */
+.story-card{background:linear-gradient(135deg,#fff 0%,#f0fdf7 100%);border:1px solid var(--teal);border-left:4px solid var(--teal);border-radius:var(--rl);padding:24px 26px;margin-bottom:22px}
+.story-eyebrow{font-size:10px;font-weight:600;color:var(--teal);letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.story-headline{font-size:18px;font-weight:600;color:var(--navy);margin-bottom:14px;line-height:1.4}
+.story-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;margin-bottom:18px;position:relative}
+.story-step{padding:14px 16px 14px 0;border-right:1px dashed var(--border)}
+.story-step:last-child{border-right:none;padding-left:18px}
+.story-step:nth-child(2){padding-left:18px}
+.story-step-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:11px;font-weight:600;margin-bottom:8px}
+.story-step-lbl{font-size:11px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.story-step-text{font-size:13px;color:var(--mid);line-height:1.65}
+.story-step-text strong{color:var(--navy);font-weight:600}
+
+/* WATERFALL */
+.waterfall-row{display:grid;grid-template-columns:200px 1fr 80px;gap:10px;align-items:center;padding:7px 0;border-bottom:1px dashed var(--border)}
+.waterfall-row:last-child{border-bottom:none}
+.wf-lbl{font-size:12px;color:var(--mid)}
+.wf-bars{position:relative;height:20px;background:var(--bg);border-radius:4px;overflow:hidden}
+.wf-bar-before{position:absolute;left:0;top:0;height:100%;background:rgba(163,45,45,.5);border-radius:4px}
+.wf-bar-after{position:absolute;left:0;top:0;height:100%;background:rgba(29,158,117,.7);border-radius:4px}
+.wf-delta{font-size:12px;font-weight:600;color:var(--teal);text-align:right}
+
+/* THREE LINES OF DEFENSE */
+.tlod-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:24px 26px;margin-bottom:22px}
+.tlod-frame{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-top:10px}
+.tlod-col{padding:18px 16px;border-radius:var(--r);position:relative;border-top:4px solid}
+.tlod-col.line1{background:#FAEEDA;border-color:var(--amber)}
+.tlod-col.line2{background:#EEF3FA;border-color:var(--blue)}
+.tlod-col.line3{background:#E1F5EE;border-color:var(--teal)}
+.tlod-num{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.05em}
+.tlod-name{font-size:14px;font-weight:600;color:var(--navy);margin-top:4px;margin-bottom:4px}
+.tlod-role{font-size:11px;color:var(--mid);font-style:italic;margin-bottom:12px}
+.tlod-actors{display:flex;flex-direction:column;gap:6px}
+.tlod-actor{background:rgba(255,255,255,.7);border-radius:6px;padding:8px 10px;font-size:11px;color:var(--mid);line-height:1.5}
+.tlod-actor strong{color:var(--navy);font-weight:600;display:block;margin-bottom:2px;font-size:12px}
+.gov-badge{font-size:10px;padding:2px 7px;border-radius:99px;background:var(--white);font-weight:500;display:inline-block;margin-top:4px;margin-right:3px}
+.gov-coso{color:#0C447C;border:1px solid #0C447C}
+.gov-cobit{color:#085041;border:1px solid #085041}
+.gov-iia{color:#633806;border:1px solid #633806}
+
+/* COMPACT COSO TABLE */
+.coso-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:24px 26px;margin-bottom:22px}
+.gtable{width:100%;border-collapse:collapse;font-size:12px}
+.gtable th{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1.5px solid var(--border);text-align:left}
+.gtable td{padding:10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.55}
+.gtable tr:last-child td{border-bottom:none}
+.comp-pill{font-size:10px;font-weight:500;padding:2px 7px;border-radius:4px;white-space:nowrap;display:inline-block}
+.cp1{background:#E6F1FB;color:#0C447C}
+.cp3{background:#EEEDFE;color:#3C3489}
+.cp4{background:#E1F5EE;color:#085041}
+.cp5{background:#FAEEDA;color:#633806}
+.s-eff{background:var(--teal-l);color:var(--teal);font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500}
+
+/* MATURITY MINI */
+.maturity-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.mat-item{background:var(--bg);border-radius:7px;padding:11px 13px;border-left:3px solid var(--blue)}
+.mat-code{font-size:11px;font-weight:600;color:var(--blue);margin-bottom:2px}
+.mat-name{font-size:11px;color:var(--mid);margin-bottom:6px;line-height:1.35}
+.mat-bar{display:flex;gap:2px;margin-bottom:3px}
+.mat-cell{flex:1;height:7px;border-radius:1.5px;background:var(--border)}
+.mat-cell.before{background:#E5A4A4}
+.mat-cell.after{background:var(--teal)}
+.mat-delta{font-size:10px;color:var(--teal);font-weight:600}
+
+/* FOOTER */
+.footer{font-size:11px;color:var(--muted);text-align:center;margin-top:18px;line-height:1.9}
+.footer a{color:var(--blue)}
+.back-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--blue);margin-bottom:14px;padding:6px 12px;border:1px solid var(--blue-l);border-radius:99px;background:var(--white)}
+.back-link:hover{background:var(--blue-l)}
+
+@media (max-width:840px){
+  .heat-layout{grid-template-columns:1fr}
+  .story-grid,.tlod-frame,.kpi-bar,.maturity-strip{grid-template-columns:1fr 1fr}
+  .story-step{border-right:none;border-bottom:1px dashed var(--border);padding-bottom:14px}
+  .story-step:nth-child(2){padding-left:0}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<a href="index.html" class="back-link">← Back to portfolio</a>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-top">
+    <div>
+      <h1>SCM GRC Case Study — From SoD Conflict to 100% Audit-Ready Operations</h1>
+      <div class="sub">Grain Warehouse LLC · Piscataway NJ · Aug 2025 – Apr 2026 · 8-month live implementation</div>
+    </div>
+  </div>
+  <div class="hdr-tags">
+    <span class="htag acc">Aligned with J&amp;J Tech, Risk &amp; Governance JD</span>
+    <span class="htag">COSO Internal Control (2013)</span>
+    <span class="htag">COBIT 2019</span>
+    <span class="htag">IIA Three Lines Model</span>
+    <span class="htag">Lunarix Technologies LLC · Yiduo Xiao</span>
+  </div>
+</div>
+
+<!-- HERO KPI BAR -->
+<div class="kpi-bar">
+  <div class="kpi">
+    <div class="kpi-l">SoD conflicts resolved</div>
+    <div class="kpi-v">4 / 4</div>
+    <div class="kpi-s">100% remediation · zero residual</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-l">Avg risk reduction</div>
+    <div class="kpi-v">−74%</div>
+    <div class="kpi-s">12 risks · inherent → residual</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-l">Billing dispute reduction</div>
+    <div class="kpi-v">−12%</div>
+    <div class="kpi-s">Detective control via WMS audit</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-l">Asset recovery rate</div>
+    <div class="kpi-v">100%</div>
+    <div class="kpi-s">3 / 3 insurance claims · ~$22K</div>
+  </div>
+</div>
+
+<!-- RISK HEAT MAP — center stage -->
+<div class="heatmap-card">
+  <div class="sec-eyebrow">Visual 1 — The universal language of risk</div>
+  <div class="sec-title">Risk Heat Map (5×5) — Inherent → Residual</div>
+  <div class="sec-sub">Click any risk to see mitigation. Solid dots = inherent risk (before controls); ring dots = residual risk (after controls). Movement toward bottom-left = successful risk reduction.</div>
+
+  <div class="heat-layout">
+    <div class="heat-svg-wrap">
+      <svg viewBox="0 0 540 460" xmlns="http://www.w3.org/2000/svg" id="heatsvg" style="width:100%;height:auto">
+        <!-- background grid 5x5 -->
+        <g id="grid"></g>
+        <!-- axes labels -->
+        <text x="270" y="450" text-anchor="middle" font-size="11" fill="#888" font-family="Segoe UI">Likelihood →</text>
+        <text x="14" y="220" text-anchor="middle" font-size="11" fill="#888" font-family="Segoe UI" transform="rotate(-90, 14, 220)">Impact →</text>
+        <!-- column headers -->
+        <g id="xlabels" font-size="10" fill="#888" font-family="Segoe UI"></g>
+        <g id="ylabels" font-size="10" fill="#888" font-family="Segoe UI"></g>
+        <!-- risks plotted as dots -->
+        <g id="risks"></g>
+        <!-- arrows from inherent → residual -->
+        <g id="arrows"></g>
+      </svg>
+      <div class="heat-legend">
+        <span><span class="legend-dot" style="background:#A32D2D"></span>High (15+)</span>
+        <span><span class="legend-dot" style="background:#BA7517"></span>Medium (8–14)</span>
+        <span><span class="legend-dot" style="background:#1D9E75"></span>Low (≤7)</span>
+        <span style="margin-left:8px">● Inherent · ○ Residual</span>
+      </div>
+    </div>
+
+    <div class="risk-panel" id="riskPanel">
+      <div class="risk-panel-title">Selected risk</div>
+      <div class="risk-name-big" id="rName">Click a dot to see detail</div>
+      <span class="risk-cat-pill cat-fin" id="rCat">Category</span>
+      <div class="score-row">
+        <div class="score-block">
+          <div class="score-lbl">Inherent</div>
+          <div class="score-val inh" id="rInh">—</div>
+        </div>
+        <div class="score-block">
+          <div class="score-lbl">Residual</div>
+          <div class="score-val res" id="rRes">—</div>
+        </div>
+        <div class="score-block">
+          <div class="score-lbl">Reduction</div>
+          <div class="score-val res" id="rRed" style="font-size:16px">—</div>
+        </div>
+      </div>
+      <div class="mit-text" id="rMit">Mitigation strategy will appear here.</div>
+    </div>
+  </div>
+</div>
+
+<!-- HERO STORY -->
+<div class="story-card">
+  <div class="story-eyebrow">Visual 2 — High-agency moment · COSO Principle 10 violation</div>
+  <div class="story-headline">"Same person was negotiating carrier rates AND approving payments. I restructured ERP roles before anyone asked."</div>
+
+  <div class="story-grid">
+    <div class="story-step">
+      <div class="story-step-num">1</div>
+      <div class="story-step-lbl">What I saw</div>
+      <div class="story-step-text">A dispatch coordinator was both <strong>negotiating freight rates with carriers</strong> and <strong>approving payment release</strong> in the ERP. Textbook <strong>Segregation of Duties violation</strong> creating an unchecked financial exposure window — ~$28K monthly throughput with no second-eye check.</div>
+    </div>
+    <div class="story-step">
+      <div class="story-step-num">2</div>
+      <div class="story-step-lbl">What I did (without being asked)</div>
+      <div class="story-step-text">Restructured ERP role permissions to <strong>hard-separate rate negotiation (dispatch)</strong> from <strong>payment approval (finance / management)</strong>. Added <strong>mandatory counter-signature</strong> step before any carrier payment release. Documented the SoD policy and ran a 3-week ERP access audit to verify no other dual-role conflicts existed.</div>
+    </div>
+    <div class="story-step">
+      <div class="story-step-num">3</div>
+      <div class="story-step-lbl">What changed</div>
+      <div class="story-step-text"><strong>Zero payment disputes</strong> attributable to authorization conflict post-implementation (vs 3 prior incidents). Unauthorized inventory adjustment risk <strong>−15%</strong>. The same audit pattern uncovered <strong>3 other SoD conflicts</strong> — all remediated. This is GRC implementation from scratch in a live logistics operation.</div>
+    </div>
+  </div>
+
+  <div style="font-size:11px;color:var(--mid);font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;margin-top:10px">Quantified before/after</div>
+  <div class="waterfall-row">
+    <div class="wf-lbl">Payment dispute incidents</div>
+    <div class="wf-bars">
+      <div class="wf-bar-before" style="width:60%"></div>
+      <div class="wf-bar-after" style="width:0%"></div>
+    </div>
+    <div class="wf-delta">3 → 0</div>
+  </div>
+  <div class="waterfall-row">
+    <div class="wf-lbl">Unauthorized inventory adjustment risk</div>
+    <div class="wf-bars">
+      <div class="wf-bar-before" style="width:80%"></div>
+      <div class="wf-bar-after" style="width:20%"></div>
+    </div>
+    <div class="wf-delta">−15%</div>
+  </div>
+  <div class="waterfall-row">
+    <div class="wf-lbl">Billing disputes (8-month trend)</div>
+    <div class="wf-bars">
+      <div class="wf-bar-before" style="width:65%"></div>
+      <div class="wf-bar-after" style="width:25%"></div>
+    </div>
+    <div class="wf-delta">−12%</div>
+  </div>
+  <div class="waterfall-row">
+    <div class="wf-lbl">Insurance claim recovery rate</div>
+    <div class="wf-bars">
+      <div class="wf-bar-before" style="width:0%"></div>
+      <div class="wf-bar-after" style="width:100%"></div>
+    </div>
+    <div class="wf-delta">100%</div>
+  </div>
+</div>
+
+<!-- THREE LINES OF DEFENSE -->
+<div class="tlod-card">
+  <div class="sec-eyebrow">Visual 3 — IIA Three Lines Model (2020)</div>
+  <div class="sec-title">5-stakeholder supply chain mapped to Three Lines of Defense</div>
+  <div class="sec-sub">The standard governance operating model used by every Big-4 audit firm and Fortune-500 risk function. Each line has independence from the line above.</div>
+
+  <div class="tlod-frame">
+
+    <div class="tlod-col line1">
+      <div class="tlod-num">1ST LINE OF DEFENSE</div>
+      <div class="tlod-name">Operational Management</div>
+      <div class="tlod-role">Owns and manages risk in daily operations</div>
+      <div class="tlod-actors">
+        <div class="tlod-actor"><strong>📦 Supplier (CN)</strong>Origin metadata, BOL accuracy, HS-code declaration</div>
+        <div class="tlod-actor"><strong>🚢 Vendor — Freight Forwarder</strong>Rate quoting, invoice issuance, custody handoff to carrier</div>
+        <div class="tlod-actor"><strong>🚛 Carrier — Truck Fleet</strong>SLA on-time delivery, weight measurement, POD collection</div>
+        <div class="tlod-actor"><strong>🏭 Warehouse Ops (Shipper 1L)</strong>Receiving, PDA scan, film-wrap SOP, dual outbound verification</div>
+      </div>
+      <div style="margin-top:10px"><span class="gov-badge gov-cobit">COBIT DSS01</span><span class="gov-badge gov-cobit">DSS05</span></div>
+    </div>
+
+    <div class="tlod-col line2">
+      <div class="tlod-num">2ND LINE OF DEFENSE</div>
+      <div class="tlod-name">Risk &amp; Compliance Functions</div>
+      <div class="tlod-role">Designs &amp; monitors controls, independent of operations</div>
+      <div class="tlod-actors">
+        <div class="tlod-actor"><strong>🛡️ SoD Policy Owner (Shipper 2L)</strong>4 SoD conflicts identified &amp; remediated · ERP role-based access control · Counter-signature workflow</div>
+        <div class="tlod-actor"><strong>📊 BI Cost Monitoring (Shipper 2L)</strong>Tableau real-time variance dashboard · Weekly distribution to all 5 stakeholders · 3 anomalies detected = $2,400 protected</div>
+        <div class="tlod-actor"><strong>📋 WMS Metadata Audit</strong>Weekly dim/weight reconciliation · 32 audits over 8 months · −12% billing disputes</div>
+      </div>
+      <div style="margin-top:10px"><span class="gov-badge gov-coso">COSO P10–P15</span><span class="gov-badge gov-cobit">COBIT APO12·APO13</span></div>
+    </div>
+
+    <div class="tlod-col line3">
+      <div class="tlod-num">3RD LINE OF DEFENSE</div>
+      <div class="tlod-name">Independent Assurance</div>
+      <div class="tlod-role">Independent audit &amp; verification — outside the value chain</div>
+      <div class="tlod-actors">
+        <div class="tlod-actor"><strong>📋 Receiver — POD &amp; Damage Verification</strong>External downstream check on cargo integrity · Damage claim documentation · Independent of vendor/carrier</div>
+        <div class="tlod-actor"><strong>🗂️ SQL Audit Trail</strong>Immutable transaction log · 100% data integrity · 8-month archive available for external audit</div>
+        <div class="tlod-actor"><strong>🗓️ Weekly Anomaly Review (Mgmt)</strong>Independent meeting reviewing SoD flags, billing disputes, hold-cargo SLAs · Escalation protocol</div>
+      </div>
+      <div style="margin-top:10px"><span class="gov-badge gov-iia">IIA Three Lines (2020)</span><span class="gov-badge gov-cobit">MEA01·MEA03</span></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- COMPACT COSO -->
+<div class="coso-card">
+  <div class="sec-eyebrow">Supporting evidence — COSO Internal Control mapping</div>
+  <div class="sec-title">Six core controls (of 13 implemented) mapped to COSO 17 Principles</div>
+  <div class="sec-sub">Concise version. Full 13-control register, evidence artifacts, and audit-trail heatmap available on request.</div>
+  <table class="gtable">
+    <thead><tr>
+      <th style="width:130px">Component</th>
+      <th>Control</th>
+      <th style="width:90px">Type</th>
+      <th style="width:80px">Status</th>
+    </tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="comp-pill cp1">Control Environment</span></td>
+        <td><strong>Payment Authorization Separation</strong> — Carrier rate negotiation (dispatch) and payment release (finance) hard-separated in ERP; counter-signature required.</td>
+        <td><span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EEF3FA;color:#0C447C">Preventive</span></td>
+        <td><span class="s-eff">Effective</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-pill cp1">Control Environment</span></td>
+        <td><strong>SoD Policy — Procurement vs Receiving</strong> — Procurement authorization hard-separated from warehouse receiving; dual-signature at inbound.</td>
+        <td><span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EEF3FA;color:#0C447C">Preventive</span></td>
+        <td><span class="s-eff">Effective</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-pill cp3">Control Activities</span></td>
+        <td><strong>Dual Verification at Outbound Loading</strong> — Loader + supervisor independently count and sign before truck departure. Short-load incidents: 0 post-implementation.</td>
+        <td><span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#EEF3FA;color:#0C447C">Preventive</span></td>
+        <td><span class="s-eff">Effective</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-pill cp3">Control Activities</span></td>
+        <td><strong>WMS Metadata Audit — Pallet Dims &amp; Weight</strong> — Weekly reconciliation between Lingxing WMS and carrier measurement. 32 audits → −12% billing disputes.</td>
+        <td><span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#E1F5EE;color:#085041">Detective</span></td>
+        <td><span class="s-eff">Effective</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-pill cp4">Information &amp; Comms</span></td>
+        <td><strong>BI Dashboard — Real-Time Cost Monitoring</strong> — Tableau dashboard distributed weekly to all 5 stakeholders. 3 anomalies detected → $2,400 cost protected.</td>
+        <td><span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#E1F5EE;color:#085041">Detective</span></td>
+        <td><span class="s-eff">Effective</span></td>
+      </tr>
+      <tr>
+        <td><span class="comp-pill cp5">Monitoring</span></td>
+        <td><strong>Weekly Anomaly Review</strong> — Independent meeting covering SoD flags, billing disputes, hold-cargo status, WMS discrepancies.</td>
+        <td><span style="font-size:10px;padding:2px 6px;border-radius:4px;background:#E1F5EE;color:#085041">Detective</span></td>
+        <td><span class="s-eff">Effective</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- MATURITY MINI -->
+<div class="coso-card" style="padding:20px 24px">
+  <div class="sec-eyebrow">COBIT 2019 maturity uplift — 8 processes, average 1.0 → 3.5</div>
+  <div class="sec-title" style="font-size:15px">Maturity progression at a glance</div>
+  <div class="maturity-strip">
+    <div class="mat-item">
+      <div class="mat-code">APO12 · Manage Risk</div>
+      <div class="mat-name">12-item risk register, monthly review</div>
+      <div class="mat-bar"><div class="mat-cell before"></div><div class="mat-cell after"></div><div class="mat-cell after"></div><div class="mat-cell"></div><div class="mat-cell"></div></div>
+      <div class="mat-delta">L1 → L3 (+2)</div>
+    </div>
+    <div class="mat-item">
+      <div class="mat-code">DSS01 · Manage Operations</div>
+      <div class="mat-name">SOPs + PDA scans + daily reports</div>
+      <div class="mat-bar"><div class="mat-cell before"></div><div class="mat-cell after"></div><div class="mat-cell after"></div><div class="mat-cell after"></div><div class="mat-cell"></div></div>
+      <div class="mat-delta">L1 → L4 (+3)</div>
+    </div>
+    <div class="mat-item">
+      <div class="mat-code">DSS05 · Security Services</div>
+      <div class="mat-name">SQL audit trail + PDA accountability</div>
+      <div class="mat-bar"><div class="mat-cell before"></div><div class="mat-cell after"></div><div class="mat-cell after"></div><div class="mat-cell after"></div><div class="mat-cell"></div></div>
+      <div class="mat-delta">L1 → L4 (+3)</div>
+    </div>
+    <div class="mat-item">
+      <div class="mat-code">MEA01 · Performance Mon.</div>
+      <div class="mat-name">Tableau BI · weekly distribution</div>
+      <div class="mat-bar"><div class="mat-cell"></div><div class="mat-cell after"></div><div class="mat-cell after"></div><div class="mat-cell after"></div><div class="mat-cell"></div></div>
+      <div class="mat-delta">L0 → L4 (+4)</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHARMA TRANSFER -->
+<div class="story-card" style="background:linear-gradient(135deg,#fff 0%,#EEF3FA 100%);border-color:var(--blue);border-left-color:var(--blue)">
+  <div class="story-eyebrow" style="color:var(--blue)">Why this matters for pharma · J&amp;J · Merck · BMS</div>
+  <div class="story-headline" style="margin-bottom:8px">The same controls that protect a warehouse protect a regulated supply chain.</div>
+  <div style="font-size:13px;color:var(--mid);line-height:1.75">
+    The SoD remediation pattern, audit trail design, dual-verification SOPs, and weekly anomaly cadence I built at Grain Warehouse are <strong>structurally analogous to 21 CFR Part 11 data-integrity requirements</strong> in pharma manufacturing — same separation principles, same evidence-chain requirements, same independent-review cadence. This is why the role transfers cleanly to <strong>J&amp;J Tech, Risk &amp; Governance</strong>, IT audit, or <strong>GxP compliance analytics</strong> work.
+  </div>
+</div>
+
+<div class="footer">
+  Built by <strong>Yiduo Xiao</strong> · Lunarix Technologies LLC · Edison, NJ<br>
+  Frameworks: COSO Internal Control Integrated Framework (2013) · COBIT 2019 · IIA Three Lines Model (2020)<br>
+  <a href="mailto:yijimu@lunariduo.com">yijimu@lunariduo.com</a> · <a href="https://linkedin.com/in/yiduo194" target="_blank">linkedin.com/in/yiduo194</a>
+</div>
+</div>
+
+<script>
+// ───── 12 RISKS · plotted on 5×5 P×I matrix ─────
+// Each risk: [name, category, inh_likelihood, inh_impact, res_likelihood, res_impact, mitigation]
+const RISKS = [
+  {name:'Unauthorized inventory adjustment', cat:'Financial',  cls:'cat-fin',  iL:4, iI:4, rL:2, rI:2, mit:'SoD: separated procurement access from receiving; dual-signature enforced at all inbound touch points.'},
+  {name:'Carrier billing overcharge (dim/weight)', cat:'Financial', cls:'cat-fin', iL:4, iI:3, rL:1, rI:3, mit:'Weekly WMS metadata audit; variance BI dashboard flagging >10% deviation; −12% billing disputes.'},
+  {name:'Vendor margin inflation (差价)', cat:'Financial', cls:'cat-fin', iL:3, iI:3, rL:1, rI:3, mit:'Invoice matching vs contracted rate; SQL-verified before payment release.'},
+  {name:'Amazon FBA rejection — height/wrap', cat:'Operational', cls:'cat-ops', iL:4, iI:3, rL:1, rI:2, mit:'Film-wrap-before-label SOP; PDA scan confirmation; 4-tier cargo risk classification.'},
+  {name:'Missing POD — invalidates insurance', cat:'Operational', cls:'cat-ops', iL:3, iI:5, rL:1, rI:5, mit:'POD upload requirement in carrier contract; claim protocol requires POD evidence.'},
+  {name:'Cargo loss or damage in transit', cat:'Financial', cls:'cat-fin', iL:3, iI:5, rL:1, rI:3, mit:'5-party claim protocol; insurance verified at carrier onboarding; 100% asset recovery.'},
+  {name:'Driver no-show / empty trip cost', cat:'Operational', cls:'cat-ops', iL:4, iI:2, rL:2, rI:2, mit:'Carrier SLA terms; confirmation call protocol; backup carrier roster.'},
+  {name:'Warehouse overflow — FBA appointment miss', cat:'Operational', cls:'cat-ops', iL:3, iI:3, rL:1, rI:3, mit:'Inbound forecasting; WMS capacity alert at 85% fill; 48-hr advance booking.'},
+  {name:'WMS metadata inaccuracy (dims/weight)', cat:'Data', cls:'cat-data', iL:4, iI:3, rL:1, rI:2, mit:'Weekly WMS audit; carrier measurement reconciliation before billing cycle.'},
+  {name:'Label overlap / PDA scan failure', cat:'Data', cls:'cat-data', iL:3, iI:2, rL:1, rI:2, mit:'Label placement SOP; re-scan protocol; WMS scan error alert.'},
+  {name:'Hold cargo — compliance or damage', cat:'Operational', cls:'cat-ops', iL:4, iI:2, rL:1, rI:3, mit:'Hold-cargo register; daily status review; 72-hr escalation protocol.'},
+  {name:'Payment authorization conflict', cat:'Compliance', cls:'cat-comp', iL:3, iI:4, rL:1, rI:2, mit:'Separated ERP accounts; counter-signature required; quarterly management audit.'},
+];
+
+// ───── DRAW 5x5 GRID ─────
+const SVG_W = 540, SVG_H = 460;
+const PAD_L = 50, PAD_R = 20, PAD_T = 20, PAD_B = 60;
+const GRID_W = SVG_W - PAD_L - PAD_R; // 470
+const GRID_H = SVG_H - PAD_T - PAD_B; // 380
+const CELL_W = GRID_W / 5;
+const CELL_H = GRID_H / 5;
+
+// Color band per cell based on P*I score
+function cellColor(L, I){
+  const score = L * I;
+  if(score >= 15) return '#FCEBEB';      // red zone
+  if(score >= 8)  return '#FAEEDA';      // amber zone
+  return '#E1F5EE';                       // green zone
+}
+function cellBorder(L, I){
+  const score = L * I;
+  if(score >= 15) return '#E5BCBC';
+  if(score >= 8)  return '#E5CCA0';
+  return '#BFE3D5';
+}
+
+// Draw grid cells
+const grid = document.getElementById('grid');
+let gridHTML = '';
+for(let L = 1; L <= 5; L++){
+  for(let I = 1; I <= 5; I++){
+    const x = PAD_L + (L-1) * CELL_W;
+    const y = PAD_T + (5-I) * CELL_H;
+    gridHTML += `<rect x="${x}" y="${y}" width="${CELL_W}" height="${CELL_H}" fill="${cellColor(L,I)}" stroke="${cellBorder(L,I)}" stroke-width="0.8" />`;
+  }
+}
+grid.innerHTML = gridHTML;
+
+// X labels (likelihood)
+const xLab = ['Rare', 'Unlikely', 'Possible', 'Likely', 'Almost certain'];
+let xLabHTML = '';
+for(let L = 1; L <= 5; L++){
+  const x = PAD_L + (L-1) * CELL_W + CELL_W/2;
+  xLabHTML += `<text x="${x}" y="${PAD_T + GRID_H + 16}" text-anchor="middle" font-size="9.5">${L} · ${xLab[L-1]}</text>`;
+}
+document.getElementById('xlabels').innerHTML = xLabHTML;
+
+// Y labels (impact)
+const yLab = ['Minor', 'Low', 'Moderate', 'Major', 'Severe'];
+let yLabHTML = '';
+for(let I = 1; I <= 5; I++){
+  const y = PAD_T + (5-I) * CELL_H + CELL_H/2 + 4;
+  yLabHTML += `<text x="${PAD_L - 8}" y="${y}" text-anchor="end" font-size="9.5">${I} · ${yLab[I-1]}</text>`;
+}
+document.getElementById('ylabels').innerHTML = yLabHTML;
+
+// Track placement to avoid overlap (jitter risks in same cell)
+const occupancy = {};
+function getOffset(L, I){
+  const key = `${L}-${I}`;
+  occupancy[key] = (occupancy[key] || 0) + 1;
+  const n = occupancy[key];
+  // spiral offset for multiple in same cell
+  const offsets = [[0,0],[10,0],[-10,0],[0,10],[0,-10],[10,10],[-10,-10],[10,-10],[-10,10]];
+  return offsets[(n-1) % offsets.length];
+}
+
+function dotColor(score){
+  if(score >= 15) return '#A32D2D';
+  if(score >= 8)  return '#BA7517';
+  return '#1D9E75';
+}
+
+// Plot inherent and residual dots + connecting arrows
+const risksG = document.getElementById('risks');
+const arrowsG = document.getElementById('arrows');
+let risksHTML = '', arrowsHTML = '';
+
+// Build arrow defs
+arrowsHTML += `<defs>
+  <marker id="arrowhead" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+    <path d="M 0 0 L 10 5 L 0 10 z" fill="#888"/>
+  </marker>
+</defs>`;
+
+// place residual first (we'll process per risk)
+const occInh = {}, occRes = {};
+function place(L, I, occ){
+  const key = `${L}-${I}`;
+  occ[key] = (occ[key] || 0) + 1;
+  const n = occ[key];
+  const off = [[0,0],[12,0],[-12,0],[0,12],[0,-12],[12,12],[-12,-12],[12,-12],[-12,12]];
+  return off[(n-1) % off.length];
+}
+
+RISKS.forEach((r, idx) => {
+  // inherent position
+  const [iox, ioy] = place(r.iL, r.iI, occInh);
+  const ix = PAD_L + (r.iL-1) * CELL_W + CELL_W/2 + iox;
+  const iy = PAD_T + (5-r.iI) * CELL_H + CELL_H/2 + ioy;
+  // residual position
+  const [rox, roy] = place(r.rL, r.rI, occRes);
+  const rx = PAD_L + (r.rL-1) * CELL_W + CELL_W/2 + rox;
+  const ry = PAD_T + (5-r.rI) * CELL_H + CELL_H/2 + roy;
+
+  const inhScore = r.iL * r.iI;
+  const resScore = r.rL * r.rI;
+
+  // Arrow line
+  arrowsHTML += `<line x1="${ix}" y1="${iy}" x2="${rx}" y2="${ry}" stroke="#888" stroke-width="0.8" stroke-dasharray="2,2" marker-end="url(#arrowhead)" opacity="0.55"/>`;
+
+  // Inherent (solid)
+  risksHTML += `<circle cx="${ix}" cy="${iy}" r="6.5" fill="${dotColor(inhScore)}" stroke="#fff" stroke-width="1.5" data-idx="${idx}" data-which="inh" style="cursor:pointer" />`;
+  risksHTML += `<text x="${ix}" y="${iy+3}" text-anchor="middle" font-size="8" fill="#fff" font-weight="600" pointer-events="none">${idx+1}</text>`;
+
+  // Residual (ring)
+  risksHTML += `<circle cx="${rx}" cy="${ry}" r="6.5" fill="#fff" stroke="${dotColor(resScore)}" stroke-width="2" data-idx="${idx}" data-which="res" style="cursor:pointer" />`;
+  risksHTML += `<text x="${rx}" y="${ry+3}" text-anchor="middle" font-size="8" fill="${dotColor(resScore)}" font-weight="600" pointer-events="none">${idx+1}</text>`;
+});
+
+risksG.innerHTML = risksHTML;
+arrowsG.innerHTML = arrowsHTML;
+
+// Risk panel updater
+function showRisk(idx){
+  const r = RISKS[idx];
+  const inhScore = r.iL * r.iI;
+  const resScore = r.rL * r.rI;
+  const reduction = Math.round((1 - resScore/inhScore) * 100);
+  document.getElementById('rName').textContent = `${idx+1}. ${r.name}`;
+  const catEl = document.getElementById('rCat');
+  catEl.textContent = r.cat;
+  catEl.className = 'risk-cat-pill ' + r.cls;
+  document.getElementById('rInh').textContent = `${inhScore}`;
+  document.getElementById('rInh').nextElementSibling;
+  document.getElementById('rRes').textContent = `${resScore}`;
+  document.getElementById('rRed').textContent = `−${reduction}%`;
+  document.getElementById('rMit').textContent = r.mit;
+}
+
+// default: show risk #1
+showRisk(0);
+
+// Click handlers
+document.querySelectorAll('#risks circle').forEach(c => {
+  c.addEventListener('click', e => {
+    const idx = parseInt(e.target.dataset.idx, 10);
+    showRisk(idx);
+  });
+});
+</script>
+</body>
+</html>
